@@ -149,3 +149,53 @@ app.post('/login', function(req, res){
   });
 });
 
+//TA LOGIN
+app.post('/login', function(req, res){
+  var ta_username = req.body.ta_username; //get the TA from the TA in the login form to verify username
+  var ta_password = sha256('noonelikesawhileloop' + req.body.ta_password); // adds sha256 in front of the password in the login fomr to verify password
+
+  Instructor.findOne({ //access the TA table in the DB to find a TA where the ta_username = the entered ta_username and the ta_password = the entered ta_password
+    where:{
+      ta_username: ta_username,
+      ta_password: ta_password
+    }
+  }).then(function(ta){
+    if(ta){ // if the TA is a valid TA, send the login successful message
+      req.session.authenticated = ta;
+      res.redirct('/instructor');
+    }else { // if the TA is not a valid TA, send the login failed message
+      res.redirect('/fail');
+    }
+  }).catch(function(err){
+    throw err;
+  });
+});
+
+app.get('/student', function(req,res){
+  if(req.session.authenticated){
+    res.render('student');
+  }else{
+    res.render('fail');
+  }
+});
+
+app.get('/instructor', function(req,res){
+  if(req.session.authenticated){
+    res.render('instructor');
+  }else{
+    res.render('fail');
+  }
+});
+
+app.get('/logout', function(req,res){
+  req.session.authenticated = false;
+  res.redirect('/');
+});
+
+sequelize.sync().then(function(){
+  app.listen(PORT, function(){
+    console.log("Boom");
+  });
+});
+
+
