@@ -1,7 +1,7 @@
 body{
 font-family: 'Handlee', cursive;
 background-color: #EBEBEB;
-color: #F7DAD9;
+color: #333;
 }
 
 /*--------------------------------------------------
@@ -31,7 +31,6 @@ color: #F7DAD9;
   color: white;
   text-align: center;
   text-decoration: none;
-
 }
 
 .sliver> ul li a.link {
@@ -39,21 +38,16 @@ color: #F7DAD9;
   padding-right: 10px;
 }
 
-nav{
-  margin-top: 40px;
-  background-color: #550C18;
-}
-
-nav .brand-logo{
-  padding-left: 20px;
-}
-
-nav ul li:hover{
-  background-color: #6B0F1F;
-
+.nav-callout{
+  position: fixed;
+  width: 100%;
+  height: 150px;
+  top: 40px;
+  background-color: #fff;
 }
 
 .callout{
+  margin-top: 190px;
   height: 400px;
   background-image: url(../images/chalkboard.png);
   background-repeat: no-repeat;
