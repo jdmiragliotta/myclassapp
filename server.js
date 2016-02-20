@@ -33,7 +33,7 @@ var Student = sequelize.define('Student',{
   student_password:{
     type: Sequelize.STRING,
   }
-}),
+});
 
 var Instructor = sequelize.define('Instructor',{
   instructor_username: {
@@ -46,7 +46,7 @@ var Instructor = sequelize.define('Instructor',{
   instructor_password:{
     type: Sequelize.STRING,
   }
-}),
+});
 
 var TA = sequelize.define('TA',{
   ta_username: {
@@ -59,7 +59,7 @@ var TA = sequelize.define('TA',{
   ta_password:{
     type: Sequelize.STRING,
   }
-}),
+});
 
 // Creates a join for Instructors to student and TA to student
 Instructor.hasMany(Student);

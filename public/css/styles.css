@@ -1,4 +1,91 @@
+body{
+font-family: 'Handlee', cursive;
+background-color: #EBEBEB;
+color: #F7DAD9;
+}
+
+/*--------------------------------------------------
+  Navigation
+--------------------------------------------------*/
+.sliver{
+  position:fixed;
+  top:0;
+  height: 40px;
+  width: 100%;
+  background-color: #cc0033;
+  color: #fff;
+}
+
+.sliver > ul{
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
+.sliver > ul li{
+  float: left;
+  padding-left: 10px;
+}
+
+.sliver > ul li a{
+  display: block;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+
+}
+
+.sliver> ul li a.link {
+   border-right: 1px solid #fff;
+  padding-right: 10px;
+}
+
+nav{
+  margin-top: 40px;
+  background-color: #550C18;
+}
+
+nav .brand-logo{
+  padding-left: 20px;
+}
+
+nav ul li:hover{
+  background-color: #6B0F1F;
+
+}
+
 .callout{
   height: 400px;
-  background-image: url(../images/chalkboard.png) center center no-repeat ;
+  background-image: url(../images/chalkboard.png);
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.heading{
+  padding-top: 35px;
+  color: #fff;
+  height: 400px;
+  background: rgba(0,0,0,0.3);
+}
+
+.card{
+  margin-top: 30px;
+  background-color: #8F8F8F;
+
+}
+
+.index-btn{
+  width: 100%;
+  margin-top: 15px;
+  background-color: #550C18;
+}
+
+.btn:hover, .btn-large:hover {
+  background-color: #6B0F1F;
+}
+
+.index-icon{
+  padding-right: 15px;
+  line-height:  36px;
+  display: inline-flex;
+  vertical-align: middle;
 }
