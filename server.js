@@ -65,6 +65,7 @@ var TA = sequelize.define('TA',{
 Instructor.hasMany(Student);
 TA.hasMany(Student);
 
+app.use(express.static('public'));
 
 // Creates a Secret for user login
 app.use(session({
