@@ -9,7 +9,6 @@ var PORT = process.env.PORT || 8080;
 // Connects to database
 var sequelize = new Sequelize('class_db', 'root');
 
-// Access JS CSS and IMG folders
 
 /*-------------------------------------------------
   PASSPORT
@@ -64,7 +63,7 @@ passport.use(new passportLocal.Strategy(
     done(null, { id: id, username: id })
   });
 
-//INSTRUCTOR PASSPORT
+// //INSTRUCTOR PASSPORT
 passport.use(new passportLocal.Strategy(
   function(username, password, done) {
       //Check passwood in DB
@@ -217,7 +216,7 @@ app.get('/register', function(req, res) {
   });
 });
 
-//STUDENT REGISTRATION
+//STUDENT REGISTRATION - FOR PASSPORT
 // Post information from form to register the student and enter into the database - this must match method=POST and action=/register in form
 app.post('/student_registration', function(req, res){
   Student.create(req.body).then(function(student){ //creates new student and password in DB according to user input
@@ -230,7 +229,7 @@ app.post('/student_registration', function(req, res){
 
 app.post('/instructor_registration', function(req, res){
   Instructor.create(req.body).then(function(instructor){ //creates new student and password in DB according to user input
-    res.redirect('/instructor');
+    res.redirect('/instructor', {instructor});
    // sends student to student page after successfully logged in after registering
  }).catch(function(err){ // throws error message if student made an error
     console.log(err);
@@ -238,58 +237,6 @@ app.post('/instructor_registration', function(req, res){
   });
 });
 
-//STUDENT LOGIN
-// app.post('/login', function(req, res){
-//   var student_username = req.body.student_username; //get the student_username from the student_username in the login form to verify username
-//   var student_password = sha256('noonelikesawhileloop' + req.body.student_password); // adds sha256 in front of the password in the login fomr to verify password
-
-//   Student.findOne({ //access the User table in the DB to find a User where the username = the entered username and the password = the entered password
-//     where:{
-//       student_username: student_username,
-//       student_password: student_password
-//     }
-//   }).then(function(student){
-//     if(student){ // if the user is a valid user, send the login successful message
-//       req.session.authenticated = student;
-//       res.redirct('/student');
-//     }else { // if the user is not a valid user, send the login failed message
-//       res.redirect('/fail');
-//     }
-//   }).catch(function(err){
-//     throw err;
-//   });
-// });
-
-//INSTRUCTOR LOGIN
-// app.post('/login', function(req, res){
-//   var instructor_username = req.body.instructor_username; //get the instructor_username from the instructor_username in the login form to verify username
-//   var instructor_password = sha256('noonelikesawhileloop' + req.body.instructor_password); // adds sha256 in front of the password in the login fomr to verify password
-
-//   Instructor.findOne({ //access the User table in the DB to find a User where the username = the entered username and the password = the entered password
-//     where:{
-//       instructor_username: instructor_username,
-//       instructor_password: instructor_password
-//     }
-//   }).then(function(instructor){
-//     if(instructor){ // if the user is a valid user, send the login successful message
-//       req.session.authenticated = instructor;
-//       res.redirct('/instructor');
-//     }else { // if the user is not a valid user, send the login failed message
-//       res.redirect('/fail');
-//     }
-//   }).catch(function(err){
-//     throw err;
-//   });
-// });
-
-app.post('/student_login',
-  passport.authenticate('local', {
-    successRedirect: '/student',
-    failureRedirect: '/?msg=Login Credentials do not work'}));
-
-app.get('/', function(req,res){
-  res.render('home',{msg: re.query.msg });
-});
 
 app.get('/student', function(req,res){
   res.render('student',{
@@ -302,12 +249,8 @@ app.get('/student', function(req,res){
 app.post('/instructor_login',
   passport.authenticate('local', {
     successRedirect: '/instructor',
-    failureRedirect: '/home'}));
+    failureRedirect: '/login'}));
 
-
-app.get('/', function(req,res){
-  res.render('home',{msg: re.query.msg });
-});
 
 app.get('/instructor', function(req,res){
   res.render('instructor',{
