@@ -25,6 +25,7 @@ app.set('view engine','handlebars');
 var Student = sequelize.define('Student',{
   student_username: {
     type: Sequelize.STRING,
+    allowNull: false,
     unique: true,
     validate:{
       len:[1, 30]
@@ -96,14 +97,15 @@ app.get('/register', function(req, res){
 // Post information from form to register the student and enter into the database - this must match method=POST and action=/register in form
 app.post('/register', function(req,res){
   var student_username = req.body.student_username; //get the student_username from the student_username in the registration form
+ //USE HOOK FROM CLASS
   var password = sha256('noonelikesawhileloop' + req.body.student_password); // adds sha256 in front of the enter student_password to make it more secure
-  User.create({student_username: student_username, student_password: student_password}).then(function(student){ //creates new student and password in DB according to user input
+  Student.create({student_username: student_username, student_password: student_password}).then(function(student){ //creates new student and password in DB according to user input
     req.session.authenticated = student; // Authenticates an approved student
     res.redirect('/student'); // sends student to student page after successfully logged in after registering
  }).catch(function(err){ // throws error message if student made an error
-    console.log(err);
-    res.redirct('/fail');
- });
+  console.log(err);
+  res.redirct('/fail');
+});
 });
 
 //STUDENT LOGIN
@@ -143,28 +145,6 @@ app.post('/login', function(req, res){
       req.session.authenticated = instructor;
       res.redirct('/instructor');
     }else { // if the user is not a valid user, send the login failed message
-      res.redirect('/fail');
-    }
-  }).catch(function(err){
-    throw err;
-  });
-});
-
-//TA LOGIN
-app.post('/login', function(req, res){
-  var ta_username = req.body.ta_username; //get the TA from the TA in the login form to verify username
-  var ta_password = sha256('noonelikesawhileloop' + req.body.ta_password); // adds sha256 in front of the password in the login fomr to verify password
-
-  Instructor.findOne({ //access the TA table in the DB to find a TA where the ta_username = the entered ta_username and the ta_password = the entered ta_password
-    where:{
-      ta_username: ta_username,
-      ta_password: ta_password
-    }
-  }).then(function(ta){
-    if(ta){ // if the TA is a valid TA, send the login successful message
-      req.session.authenticated = ta;
-      res.redirct('/instructor');
-    }else { // if the TA is not a valid TA, send the login failed message
       res.redirect('/fail');
     }
   }).catch(function(err){
