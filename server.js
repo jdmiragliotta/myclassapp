@@ -17,8 +17,7 @@ var sequelize = new Sequelize('class_db', 'root');
 app.use(bodyParser.urlencoded({extended: false}));
 
 // Access JS CSS and IMG folders
-app.use('/static', express.static('public'));
-
+app.use(express.static(__dirname + '/public'));
 // setting default layout to main.handlebars
 app.engine('handlebars', expressHandlebars({defaultLayout: 'main'}));
 app.set('view engine','handlebars');
@@ -68,12 +67,15 @@ app.use(session({
     taID2: {
       type: Sequelize.INTEGER,
       allowNull: false
-    }, hooks: {
-      beforeCreate= function(input){
-        input.password = bcrypt.hasSync(input.password, 10204059);
-      }
     }
-  });
+  } , {
+      hooks: {
+        beforeCreate: function(input){
+          input.password = bcrypt.hashSync(input.password, 10);
+         }
+      }
+    });
+
 
   var Instructor = sequelize.define('Instructor',{
     username: {
@@ -101,7 +103,7 @@ app.use(session({
   }, {
    hooks: {
     beforeCreate: function(input){
-      input.password = bcrypt.hashSync(input.password, 10204059);
+      input.password = bcrypt.hashSync(input.password, 10);
     }
   }
 });
@@ -188,19 +190,47 @@ app.get('/login', function(req, res){
   res.render('login'); //show login.handlebars
 });
 
-//takes student to registration page if registration button is clicked
-app.get('/register', function(req, res){
-  res.render('register'); //show register.handlebars
+//takes student to registration page if registration button is clicked and iterates thru the teacher and ta columns to present in dropdown menu
+
+app.get('/register', function(req, res) {
+  var data;
+  Instructor.findAll({
+    where: {
+      teachOrTA: 'teacher'
+    }
+  }).then(function(teacher) {
+    data = {
+      teacher: teacher
+    }
+    Instructor.findAll({
+      where: {
+        teachOrTA: 'ta'
+      }
+    }).then(function(ta) {
+      data.ta = ta;
+      res.render('register', data)
+    });
+  });
 });
 
 //STUDENT REGISTRATION
 // Post information from form to register the student and enter into the database - this must match method=POST and action=/register in form
-app.post('/register', function(req,res){
+app.post('/student_registration', function(req,res){
   Student.create(req.body).then(function(student){ //creates new student and password in DB according to user input
     res.redirect('/student'); // sends student to student page after successfully logged in after registering
  }).catch(function(err){ // throws error message if student made an error
     console.log(err);
-    res.redirct('/fail');
+    res.redirect('/fail');
+  });
+});
+
+app.post('/instructor_registration', function(req,res){
+  Instructor.create(req.body).then(function(instructor){ //creates new student and password in DB according to user input
+    res.redirect('/instructor');
+    debugger; // sends student to student page after successfully logged in after registering
+ }).catch(function(err){ // throws error message if student made an error
+    console.log(err);
+    res.redirect('/fail');
   });
 });
 
