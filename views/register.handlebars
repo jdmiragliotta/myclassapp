@@ -11,68 +11,7 @@
       <form class="col s12" method="POST" action="/student_registration">
         <div class="row">
           <div class="input-field col s6">
-            <input placeholder="Placeholder" id="first_name" type="text" name="firstname" class="validate" >
-            <label for="first_name">First Name</label>
-          </div>
-
-          <div class="input-field col s6">
-            <input id="last_name" type="text" name="lastname" class="validate">
-            <label for="last_name">Last Name</label>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="input-field col s12">
-            <input id="email" type="email" name="username" class="validate">
-            <label for="email">Username</label>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="input-field col s12">
-            <input id="password" type="password" class="validate">
-            <label for="password">Password</label>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="input-field col s6">
-            <select class="form-control" name="teacherID">
-              {{#each teacher}}
-              <option value={{id}}>{{firstname}} {{lastname}}</option>
-              {{/each}}
-            </select>
-            <label>Instructor</label>
-          </div>
-          <div class="input-field col s3">
-            <select class="form-control" name="taID">
-              {{#each ta}}
-              <option value={{id}}>{{firstname}} {{lastname}}</option>
-              {{/each}}
-            </select>
-            <label>First TA</label>
-          </div>
-          <div class="input-field col s3">
-            <select class="form-control" name="taID2">
-              {{#each ta}}
-              <option value={{id}}>{{firstname}} {{lastname}}</option>
-              {{/each}}
-            </select>
-            <label>Second TA</label>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
-
-
-
-  <div id="instructor" class="col s12">
-    <div class="row">
-      <form class="col s12" method="POST" action="/instructor_registration">
-        <div class="row">
-          <div class="input-field col s6">
-            <input placeholder="Placeholder" id="first_name" type="text" name="firstname" class="validate" >
+            <input  id="first_name" type="text" name="firstname" class="validate" >
             <label for="first_name">First Name</label>
           </div>
 
@@ -91,20 +30,82 @@
 
         <div class="row">
           <div class="input-field col s12">
-            <input id="password" type="password" class="validate">
+            <input id="password" type="password" name="password" class="validate">
+            <label for="password">Password</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="input-field col s6">
+            <select class="form-control" name="teacherID">
+               <option value="" disabled selected>Choose your Teacher</option>
+              {{#each teacher}}
+              <option value={{id}}>{{firstname}} {{lastname}}</option>
+              {{/each}}
+            </select>
+          </div>
+          <div class="input-field col s3">
+            <select class="form-control" name="taID">
+              <option value="" disabled selected>Choose your First TA</option>
+              {{#each ta}}
+              <option value={{id}}>{{firstname}} {{lastname}}</option>
+              {{/each}}
+            </select>
+          </div>
+          <div class="input-field col s3">
+            <select class="form-control" name="taID2">
+              <option value="" disabled selected>Choose your Second TA</option>
+              {{#each ta}}
+              <option value={{id}}>{{firstname}} {{lastname}}</option>
+              {{/each}}
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="waves-effect waves-light btnt">Register</button>
+      </form>
+    </div>
+  </div>
+
+
+
+  <div id="instructor" class="col s12">
+    <div class="row">
+      <form class="col s12" method="POST" action="/instructor_registration">
+        <div class="row">
+          <div class="input-field col s6">
+            <input id="first_name" type="text" name="firstname" class="validate" >
+            <label for="first_name">First Name</label>
+          </div>
+
+          <div class="input-field col s6">
+            <input id="last_name" type="text" name="lastname" class="validate">
+            <label for="last_name">Last Name</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="username" type="text" name="username" class="validate">
+            <label for="username">Username</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="password" type="password" name ="password" class="validate">
             <label for="password">Password</label>
           </div>
         </div>
 
         <div>
-          <input name="teachOrTA" type="radio" id="test1" value="teacher" checked/>
+          <input name="teachOrTA" type="radio" id="test1" value="teacher"/>
           <label for="test1">Teacher</label>
         </div>
         <div>
           <input name="teachOrTA" type="radio" id="test2" value="ta" />
           <label for="test2">TA</label>
         </div>
-        <button type="submit" class="waves-effect waves-light btnt">Submit</button>
+        <button type="submit" class="waves-effect waves-light btnt">Register</button>
        </form>
     </div>
   </div>

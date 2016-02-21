@@ -138,7 +138,7 @@ passport.use(new passportLocal(
       }).then(function(user){
         //check password against hash
         if(user){
-          bcyrpt.compare(password, user,dataValues.password, function(err,user){
+          bcrypt.compare(password, user.dataValues.password, function(err,user){
             if(user){
               //if password is correcnt authenticat the user with cookie
               done(null, {id: username, username:username});
@@ -163,7 +163,7 @@ passport.use(new passportLocal(
       }).then(function(user){
         //check password against hash
         if(user){
-          bcyrpt.compare(password, user,dataValues.password, function(err,user){
+          bcrypt.compare(password, user.dataValues.password, function(err,user){
             if(user){
               //if password is correcnt authenticat the user with cookie
               done(null, {id: username, username:username});
@@ -196,7 +196,7 @@ app.get('/register', function(req, res) {
   var data;
   Instructor.findAll({
     where: {
-      teachOrTA: 'teacher'
+      teachOrTA:'teacher'
     }
   }).then(function(teacher) {
     data = {
@@ -215,7 +215,7 @@ app.get('/register', function(req, res) {
 
 //STUDENT REGISTRATION
 // Post information from form to register the student and enter into the database - this must match method=POST and action=/register in form
-app.post('/student_registration', function(req,res){
+app.post('/student_registration', function(req, res){
   Student.create(req.body).then(function(student){ //creates new student and password in DB according to user input
     res.redirect('/student'); // sends student to student page after successfully logged in after registering
  }).catch(function(err){ // throws error message if student made an error
@@ -224,7 +224,7 @@ app.post('/student_registration', function(req,res){
   });
 });
 
-app.post('/instructor_registration', function(req,res){
+app.post('/instructor_registration', function(req, res){
   Instructor.create(req.body).then(function(instructor){ //creates new student and password in DB according to user input
     res.redirect('/instructor');
     debugger; // sends student to student page after successfully logged in after registering
@@ -285,7 +285,7 @@ app.post('/student_login',
 app.get('/student', function(req,res){
   res.render('student',{
     user: req.user,
-    isAuthenticaded: req.inAuthenticated()
+    isAuthenticated: req.isAuthenticated()
   });
 });
 
@@ -296,7 +296,7 @@ app.post('/instructor_login',
 app.get('/instructor', function(req,res){
   res.render('instructor',{
     user: req.user,
-    isAuthenticaded: req.inAuthenticated()
+    isAuthenticated: req.isAuthenticated()
   });
 });
 
