@@ -237,6 +237,10 @@ app.post('/instructor_registration', function(req, res){
   });
 });
 
+app.post('/student_login',
+  passport.authenticate('local', {
+    successRedirect: '/student',
+    failureRedirect: '/login'}));
 
 app.get('/student', function(req,res){
   res.render('student',{
