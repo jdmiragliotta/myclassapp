@@ -4,8 +4,9 @@ var expressHandlebars = require('express-handlebars');
 var bodyParser        = require('body-parser');
 var session           = require('express-session');
 var Sequelize         = require('sequelize');
-var sha256            = require('sha256');
-var mysql             =require('mysql');
+var bcrypt            = require('bcryptjs');
+var passport          = require('passport');
+var passportLocal     = require('passport-local');
 var app               = express();
 var PORT = process.env.PORT || 8080;
 
@@ -15,58 +16,12 @@ var sequelize = new Sequelize('class_db', 'root');
 // bodyParser to read info from HTML
 app.use(bodyParser.urlencoded({extended: false}));
 
+// Access JS CSS and IMG folders
+app.use('/static', express.static('public'));
+
 // setting default layout to main.handlebars
 app.engine('handlebars', expressHandlebars({defaultLayout: 'main'}));
-
-// setting view to all handlebar pages
 app.set('view engine','handlebars');
-
-//Set Up For Student Table in class_db
-var Student = sequelize.define('Student',{
-  student_username: {
-    type: Sequelize.STRING,
-    allowNull: false,
-    unique: true,
-    validate:{
-      len:[1, 30]
-    }
-  },
-  student_password:{
-    type: Sequelize.STRING,
-  }
-});
-
-var Instructor = sequelize.define('Instructor',{
-  instructor_username: {
-    type: Sequelize.STRING,
-    unique: true,
-    validate:{
-      len:[1, 30]
-    }
-  },
-  instructor_password:{
-    type: Sequelize.STRING,
-  }
-});
-
-var TA = sequelize.define('TA',{
-  ta_username: {
-    type: Sequelize.STRING,
-    unique: true,
-    validate:{
-      len:[1, 30]
-    }
-  },
-  ta_password:{
-    type: Sequelize.STRING,
-  }
-});
-
-// Creates a join for Instructors to student and TA to student
-Instructor.hasMany(Student);
-TA.hasMany(Student);
-
-app.use(express.static('public'));
 
 // Creates a Secret for user login
 app.use(session({
@@ -77,6 +32,151 @@ app.use(session({
   saveUninitialized: true,
   resave: false
 }));
+
+/*-------------------------------------------------
+  MODELS
+  -------------------------------------------------*/
+  var Student = sequelize.define('Student',{
+    username: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      unique: true,
+      validate:{
+        len:[1, 30]
+      }
+    },
+    password:{
+      type: Sequelize.STRING,
+      allowNull: false
+    },
+    firstname: {
+      type: Sequelize.STRING,
+      allowNull: false
+    },
+    lastname: {
+      type: Sequelize.STRING,
+      allowNull: false
+    },
+    teacherID: {
+      type: Sequelize.INTEGER,
+      allowNull: false
+    },
+    taID: {
+      type: Sequelize.INTEGER,
+      allowNull: false
+    },
+    taID2: {
+      type: Sequelize.INTEGER,
+      allowNull: false
+    }, hooks: {
+      beforeCreate= function(input){
+        input.password = bcrypt.hasSync(input.password, 10204059);
+      }
+    }
+  });
+
+  var Instructor = sequelize.define('Instructor',{
+    username: {
+      type: Sequelize.STRING,
+      unique: true,
+      validate:{
+        len:[1, 30]
+      }
+    },
+    password:{
+      type: Sequelize.STRING,
+    },
+    firstname: {
+      type: Sequelize.STRING,
+      allowNull: false
+    },
+    lastname: {
+      type: Sequelize.STRING,
+      allowNull: false
+    },
+    teachOrTA: {
+      type: Sequelize.STRING,
+      allowNull: false
+    },
+  }, {
+   hooks: {
+    beforeCreate: function(input){
+      input.password = bcrypt.hashSync(input.password, 10204059);
+    }
+  }
+});
+
+  // Creates a join for Instructors to student and TA to student
+  Instructor.hasMany(Student);
+
+/*-------------------------------------------------
+  PASSPORT
+  -------------------------------------------------*/
+  app.use(passport.initialize());
+  app.use(passport.session());
+
+  //change the object used to authenticate to a smaller token, and protects the server from attacks
+  passport.serializeUser(function(user, done) {
+    done(null, user.id);
+  });
+  passport.deserializeUser(function(id, done) {
+    done(null, { id: id, username: id })
+  });
+
+//passport use methed as callback when being authenticated
+
+//STUDENT PASSPORT
+passport.use(new passportLocal(
+  function(username, password, done) {
+      //Check passwood in DB
+      Student.findOne({
+        where:{
+          username: username
+        }
+      }).then(function(user){
+        //check password against hash
+        if(user){
+          bcyrpt.compare(password, user,dataValues.password, function(err,user){
+            if(user){
+              //if password is correcnt authenticat the user with cookie
+              done(null, {id: username, username:username});
+            }else{
+              done(null,null);
+            }
+          });
+        }else {
+          done(null, null);
+        }
+      });
+    }));
+
+//INSTRUCTOR PASSPORT
+passport.use(new passportLocal(
+  function(username, password, done) {
+      //Check passwood in DB
+      Instructor.findOne({
+        where:{
+          username: username
+        }
+      }).then(function(user){
+        //check password against hash
+        if(user){
+          bcyrpt.compare(password, user,dataValues.password, function(err,user){
+            if(user){
+              //if password is correcnt authenticat the user with cookie
+              done(null, {id: username, username:username});
+            }else{
+              done(null,null);
+            }
+          });
+        }else {
+          done(null, null);
+        }
+      });
+    }));
+/*-------------------------------------------------
+  ROUTES
+  -------------------------------------------------*/
 
 //takes user to homepage  on page load
 app.get('/', function(req, res){
@@ -96,76 +196,78 @@ app.get('/register', function(req, res){
 //STUDENT REGISTRATION
 // Post information from form to register the student and enter into the database - this must match method=POST and action=/register in form
 app.post('/register', function(req,res){
-  var student_username = req.body.student_username; //get the student_username from the student_username in the registration form
- //USE HOOK FROM CLASS
-  var password = sha256('noonelikesawhileloop' + req.body.student_password); // adds sha256 in front of the enter student_password to make it more secure
-  Student.create({student_username: student_username, student_password: student_password}).then(function(student){ //creates new student and password in DB according to user input
-    req.session.authenticated = student; // Authenticates an approved student
+  Student.create(req.body).then(function(student){ //creates new student and password in DB according to user input
     res.redirect('/student'); // sends student to student page after successfully logged in after registering
  }).catch(function(err){ // throws error message if student made an error
-  console.log(err);
-  res.redirct('/fail');
-});
+    console.log(err);
+    res.redirct('/fail');
+  });
 });
 
 //STUDENT LOGIN
-app.post('/login', function(req, res){
-  var student_username = req.body.student_username; //get the student_username from the student_username in the login form to verify username
-  var student_password = sha256('noonelikesawhileloop' + req.body.student_password); // adds sha256 in front of the password in the login fomr to verify password
+// app.post('/login', function(req, res){
+//   var student_username = req.body.student_username; //get the student_username from the student_username in the login form to verify username
+//   var student_password = sha256('noonelikesawhileloop' + req.body.student_password); // adds sha256 in front of the password in the login fomr to verify password
 
-  Student.findOne({ //access the User table in the DB to find a User where the username = the entered username and the password = the entered password
-    where:{
-      student_username: student_username,
-      student_password: student_password
-    }
-  }).then(function(student){
-    if(student){ // if the user is a valid user, send the login successful message
-      req.session.authenticated = student;
-      res.redirct('/student');
-    }else { // if the user is not a valid user, send the login failed message
-      res.redirect('/fail');
-    }
-  }).catch(function(err){
-    throw err;
-  });
-});
+//   Student.findOne({ //access the User table in the DB to find a User where the username = the entered username and the password = the entered password
+//     where:{
+//       student_username: student_username,
+//       student_password: student_password
+//     }
+//   }).then(function(student){
+//     if(student){ // if the user is a valid user, send the login successful message
+//       req.session.authenticated = student;
+//       res.redirct('/student');
+//     }else { // if the user is not a valid user, send the login failed message
+//       res.redirect('/fail');
+//     }
+//   }).catch(function(err){
+//     throw err;
+//   });
+// });
 
 //INSTRUCTOR LOGIN
-app.post('/login', function(req, res){
-  var instructor_username = req.body.instructor_username; //get the instructor_username from the instructor_username in the login form to verify username
-  var instructor_password = sha256('noonelikesawhileloop' + req.body.instructor_password); // adds sha256 in front of the password in the login fomr to verify password
+// app.post('/login', function(req, res){
+//   var instructor_username = req.body.instructor_username; //get the instructor_username from the instructor_username in the login form to verify username
+//   var instructor_password = sha256('noonelikesawhileloop' + req.body.instructor_password); // adds sha256 in front of the password in the login fomr to verify password
 
-  Instructor.findOne({ //access the User table in the DB to find a User where the username = the entered username and the password = the entered password
-    where:{
-      instructor_username: instructor_username,
-      instructor_password: instructor_password
-    }
-  }).then(function(instructor){
-    if(instructor){ // if the user is a valid user, send the login successful message
-      req.session.authenticated = instructor;
-      res.redirct('/instructor');
-    }else { // if the user is not a valid user, send the login failed message
-      res.redirect('/fail');
-    }
-  }).catch(function(err){
-    throw err;
+//   Instructor.findOne({ //access the User table in the DB to find a User where the username = the entered username and the password = the entered password
+//     where:{
+//       instructor_username: instructor_username,
+//       instructor_password: instructor_password
+//     }
+//   }).then(function(instructor){
+//     if(instructor){ // if the user is a valid user, send the login successful message
+//       req.session.authenticated = instructor;
+//       res.redirct('/instructor');
+//     }else { // if the user is not a valid user, send the login failed message
+//       res.redirect('/fail');
+//     }
+//   }).catch(function(err){
+//     throw err;
+//   });
+// });
+
+app.post('/student_login',
+    passport.authenticate('local', { successRedirect: '/student',
+                                     failureRedirect: '/home'}));
+
+app.get('/student', function(req,res){
+  res.render('student',{
+    user: req.user,
+    isAuthenticaded: req.inAuthenticated()
   });
 });
 
-app.get('/student', function(req,res){
-  if(req.session.authenticated){
-    res.render('student');
-  }else{
-    res.render('fail');
-  }
-});
+app.post('/instructor_login',
+    passport.authenticate('local', { successRedirect: '/instructor',
+                                     failureRedirect: '/home'}));
 
 app.get('/instructor', function(req,res){
-  if(req.session.authenticated){
-    res.render('instructor');
-  }else{
-    res.render('fail');
-  }
+  res.render('instructor',{
+    user: req.user,
+    isAuthenticaded: req.inAuthenticated()
+  });
 });
 
 app.get('/logout', function(req,res){
