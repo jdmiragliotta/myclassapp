@@ -1,36 +1,98 @@
 // Inports all packages
 var express           = require('express');
 var expressHandlebars = require('express-handlebars');
-var bodyParser        = require('body-parser');
 var session           = require('express-session');
 var Sequelize         = require('sequelize');
-var bcrypt            = require('bcryptjs');
-var passport          = require('passport');
-var passportLocal     = require('passport-local');
 var app               = express();
 var PORT = process.env.PORT || 8080;
 
 // Connects to database
 var sequelize = new Sequelize('class_db', 'root');
 
-// bodyParser to read info from HTML
-app.use(bodyParser.urlencoded({extended: false}));
-
 // Access JS CSS and IMG folders
-app.use(express.static(__dirname + '/public'));
-// setting default layout to main.handlebars
-app.engine('handlebars', expressHandlebars({defaultLayout: 'main'}));
-app.set('view engine','handlebars');
+
+/*-------------------------------------------------
+  PASSPORT
+  -------------------------------------------------*/
 
 // Creates a Secret for user login
+var passport          = require('passport');
+var passportLocal     = require('passport-local');
 app.use(session({
   secret: 'shh if I tell you its not a secret',
   cookie:{
+    secure: false,
     maxAge: 1000 * 60 * 60 * 24 * 14
   },
   saveUninitialized: true,
-  resave: false
+  resave: true
 }));
+  app.use(passport.initialize());
+  app.use(passport.session());
+
+//passport use methed as callback when being authenticated
+
+//STUDENT PASSPORT
+passport.use(new passportLocal.Strategy(
+  function(username, password, done) {
+      //Check passwood in DB
+      Student.findOne({
+        where:{
+          username: username
+        }
+      }).then(function(user){
+        //check password against hash
+        if(user){
+          bcrypt.compare(password, user.dataValues.password, function(err, user){
+            if(user){
+              //if password is correcnt authenticate the user with cookie
+              done(null, {id: username, username:username});
+            }else{
+              done(null,null);
+            }
+          });
+        }else {
+          done(null, null);
+        }
+      });
+    }));
+
+  passport.serializeUser(function(user, done) {
+    done(null, user.id);
+  });
+  passport.deserializeUser(function(id, done) {
+    done(null, { id: id, username: id })
+  });
+
+//INSTRUCTOR PASSPORT
+passport.use(new passportLocal.Strategy(
+  function(username, password, done) {
+      //Check passwood in DB
+      Instructor.findOne({
+        where:{
+          username: username
+        }
+      }).then(function(user){
+        //check password against hash
+        if(user){
+          bcrypt.compare(password, user.dataValues.password, function(err,user){
+            if(user){
+              //if password is correcnt authenticat the user with cookie
+              done(null, {id: username, username:username});
+            }else{
+              done(null,null);
+            }
+          });
+        }else {
+          done(null, null);
+        }
+      });
+    }));
+
+// bodyParser to read info from HTML
+var bcrypt            = require('bcryptjs');
+var bodyParser        = require('body-parser');
+app.use(bodyParser.urlencoded({extended: false}));
 
 /*-------------------------------------------------
   MODELS
@@ -111,71 +173,13 @@ app.use(session({
   // Creates a join for Instructors to student and TA to student
   Instructor.hasMany(Student);
 
-/*-------------------------------------------------
-  PASSPORT
-  -------------------------------------------------*/
-  app.use(passport.initialize());
-  app.use(passport.session());
+  app.use(express.static(__dirname + '/public'));
+// setting default layout to main.handlebars
+  app.engine('handlebars', expressHandlebars({defaultLayout: 'main'}));
+  app.set('view engine','handlebars');
 
-  //change the object used to authenticate to a smaller token, and protects the server from attacks
-  passport.serializeUser(function(user, done) {
-    done(null, user.id);
-  });
-  passport.deserializeUser(function(id, done) {
-    done(null, { id: id, username: id })
-  });
 
-//passport use methed as callback when being authenticated
 
-//STUDENT PASSPORT
-passport.use(new passportLocal(
-  function(username, password, done) {
-      //Check passwood in DB
-      Student.findOne({
-        where:{
-          username: username
-        }
-      }).then(function(user){
-        //check password against hash
-        if(user){
-          bcrypt.compare(password, user.dataValues.password, function(err,user){
-            if(user){
-              //if password is correcnt authenticat the user with cookie
-              done(null, {id: username, username:username});
-            }else{
-              done(null,null);
-            }
-          });
-        }else {
-          done(null, null);
-        }
-      });
-    }));
-
-//INSTRUCTOR PASSPORT
-passport.use(new passportLocal(
-  function(username, password, done) {
-      //Check passwood in DB
-      Instructor.findOne({
-        where:{
-          username: username
-        }
-      }).then(function(user){
-        //check password against hash
-        if(user){
-          bcrypt.compare(password, user.dataValues.password, function(err,user){
-            if(user){
-              //if password is correcnt authenticat the user with cookie
-              done(null, {id: username, username:username});
-            }else{
-              done(null,null);
-            }
-          });
-        }else {
-          done(null, null);
-        }
-      });
-    }));
 /*-------------------------------------------------
   ROUTES
   -------------------------------------------------*/
@@ -227,7 +231,7 @@ app.post('/student_registration', function(req, res){
 app.post('/instructor_registration', function(req, res){
   Instructor.create(req.body).then(function(instructor){ //creates new student and password in DB according to user input
     res.redirect('/instructor');
-    debugger; // sends student to student page after successfully logged in after registering
+   // sends student to student page after successfully logged in after registering
  }).catch(function(err){ // throws error message if student made an error
     console.log(err);
     res.redirect('/fail');
@@ -279,8 +283,13 @@ app.post('/instructor_registration', function(req, res){
 // });
 
 app.post('/student_login',
-    passport.authenticate('local', { successRedirect: '/student',
-                                     failureRedirect: '/home'}));
+  passport.authenticate('local', {
+    successRedirect: '/student',
+    failureRedirect: '/?msg=Login Credentials do not work'}));
+
+app.get('/', function(req,res){
+  res.render('home',{msg: re.query.msg });
+});
 
 app.get('/student', function(req,res){
   res.render('student',{
@@ -289,13 +298,20 @@ app.get('/student', function(req,res){
   });
 });
 
+
 app.post('/instructor_login',
-    passport.authenticate('local', { successRedirect: '/instructor',
-                                     failureRedirect: '/home'}));
+  passport.authenticate('local', {
+    successRedirect: '/instructor',
+    failureRedirect: '/home'}));
+
+
+app.get('/', function(req,res){
+  res.render('home',{msg: re.query.msg });
+});
 
 app.get('/instructor', function(req,res){
   res.render('instructor',{
-    user: req.user,
+    username: req.username,
     isAuthenticated: req.isAuthenticated()
   });
 });
