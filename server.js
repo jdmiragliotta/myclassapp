@@ -1,3 +1,19 @@
+Skip to content
+This repository
+Search
+Pull requests
+Issues
+Gist
+ @jdmiragliotta
+ Unwatch 1
+  Star 0
+ Fork 1 jdmiragliotta/myclassapp
+ Code  Issues 0  Pull requests 0  Wiki  Pulse  Graphs  Settings
+Branch: master Find file Copy pathmyclassapp/server.js
+fde8c04  4 minutes ago
+@jdmiragliotta jdmiragliotta Refactored code and finally working with passport
+1 contributor
+RawBlameHistory     278 lines (245 sloc)  7.15 KB
 
 // Inports all packages
 var express           = require('express');
@@ -275,3 +291,5 @@ sequelize.sync().then(function(){
   });
 });
 
+Status API Training Shop Blog About Pricing
+© 2016 GitHub, Inc. Terms Privacy Security Contact Help
