@@ -197,6 +197,11 @@ button.btn {
 }
 
 .not-lr{
+  padding-top:10px;
   display: inline-block;
+}
+
+.radio{
+  margin-top: -20px;
 }
 

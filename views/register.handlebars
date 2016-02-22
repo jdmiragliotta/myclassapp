@@ -1,112 +1,165 @@
-
-<div class="row">
-  <div class="col s12">
-    <ul class="tabs">
-      <li class="tab col s3"><a class="active" href="#student">Student</a></li>
-      <li class="tab col s3"><a href="#instructor">Instructor</a></li>
+<header>
+  <div class="sliver">
+    <ul>
+      <li><a href="#" class="link">Universitywide</a></li>
+      <li><a href="#" class="link">New Brunswick</a></li>
+      <li><a href="#" class="link">RBHS</a></li>
+      <li><a href="#" class="link">Newark</a></li>
+      <li><a href="#" class="link">Camden</a></li>
+      <li><a href="#">Online</a></li>
     </ul>
   </div>
-  <div id="student" class="col s12">
-    <div class="row">
-      <form class="col s12" method="POST" action="/student_registration">
-        <div class="row">
-          <div class="input-field col s6">
-            <input  id="first_name" type="text" name="firstname" class="validate" >
-            <label for="first_name">First Name</label>
-          </div>
-
-          <div class="input-field col s6">
-            <input id="last_name" type="text" name="lastname" class="validate">
-            <label for="last_name">Last Name</label>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="input-field col s12">
-            <input id="username" type="text" name="username" class="validate">
-            <label for="username">Username</label>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="input-field col s12">
-            <input id="password" type="password" name="password" class="validate">
-            <label for="password">Password</label>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="input-field col s6">
-            <select class="form-control" name="teacherID">
-               <option value="" disabled selected>Choose your Teacher</option>
-              {{#each teacher}}
-              <option value={{id}}>{{firstname}} {{lastname}}</option>
-              {{/each}}
-            </select>
-          </div>
-          <div class="input-field col s3">
-            <select class="form-control" name="taID">
-              <option value="" disabled selected>Choose your First TA</option>
-              {{#each ta}}
-              <option value={{id}}>{{firstname}} {{lastname}}</option>
-              {{/each}}
-            </select>
-          </div>
-          <div class="input-field col s3">
-            <select class="form-control" name="taID2">
-              <option value="" disabled selected>Choose your Second TA</option>
-              {{#each ta}}
-              <option value={{id}}>{{firstname}} {{lastname}}</option>
-              {{/each}}
-            </select>
-          </div>
-        </div>
-        <button type="submit" class="waves-effect waves-light btnt">Register</button>
-      </form>
+  <div class="nav-callout">
+    <div id="pentagon">
+      <div class="square"><span class="date center-align">1766-2016</span><span class="logo center-align">Rutgers</span><span  class="year center-align"> 250</span></div>
     </div>
+ <h4 class="rutgers250">The State Univeristy of New Jersey</h4>
+    <div class="buttons right">
+      <a href="/" class="waves-effect waves-light index-btn login btn"><i class="material-icons index-icon">home</i>Home</a>
+      <a href="/logout" class="waves-effect waves-light index-btn register btn"><i class="material-icons index-icon">account_circle</i>Login</a>
+    </div>
+    <div class="btm_sliver">
+      <ul>
+        <li><a href="#"class="link">Info For</a></li>
+        <li><a href="#"class="link">Research</a></li>
+        <li><a href="#"class="link">Health and Healthcare</a></li>
+        <li><a href="#"class="link">Athletics</a></li>
+        <li><a href="#"class="link">Alumni</a></li>
+        <li><a href="#"class="link">Admissions</a></li>
+        <li><a href="#"class="link">Academic</a></li>
+        <li><a href="#"class="link">About</a></li>
+      </ul>
+    </div>
+
   </div>
+</header>
 
 
-
-  <div id="instructor" class="col s12">
+<main>
+  <div class="container">
     <div class="row">
-      <form class="col s12" method="POST" action="/instructor_registration">
+      <div class="col l6 offset-l3">
+        <ul class="tabs">
+          <li class="tab col s3"><a class="active" href="#student">Student</a></li>
+          <li class="tab col s3"><a href="#instructor">Instructor</a></li>
+        </ul>
+      </div>
+      <div id="student" class="col s6 offset-s3">
         <div class="row">
-          <div class="input-field col s6">
-            <input id="first_name" type="text" name="firstname" class="validate" >
-            <label for="first_name">First Name</label>
-          </div>
+          <form  method="POST" action="/student_registration">
+            <div class="row">
+              <div class="input-field col s10 offset-s1">
+                <input  id="first_name" type="text" name="firstname" class="validate" >
+                <label for="first_name">First Name</label>
+              </div>
+           </div>
 
-          <div class="input-field col s6">
-            <input id="last_name" type="text" name="lastname" class="validate">
-            <label for="last_name">Last Name</label>
-          </div>
+            <div class="row">
+              <div class="input-field col s10 offset-s1">
+                <input id="last_name" type="text" name="lastname" class="validate">
+                <label for="last_name">Last Name</label>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="input-field col s10 offset-s1">
+                <input id="username" type="text" name="username" class="validate">
+                <label for="username">Username</label>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="input-field col s10 offset-s1">
+                <input id="password" type="password" name="password" class="validate">
+                <label for="password">Password</label>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="input-field col s10 offset-s1">
+                <select class="form-control" name="teacherID">
+                   <option value="" disabled selected>Choose  Teacher</option>
+                  {{#each teacher}}
+                  <option value={{id}}>{{firstname}} {{lastname}}</option>
+                  {{/each}}
+                </select>
+              </div>
+              <div class="input-field col s5 offset-s1">
+                <select class="form-control" name="taID">
+                  <option value="" disabled selected>Choose TA</option>
+                  {{#each ta}}
+                  <option value={{id}}>{{firstname}} {{lastname}}</option>
+                  {{/each}}
+                </select>
+              </div>
+              <div class="input-field col s5">
+                <select class="form-control" name="taID2">
+                  <option value="" disabled selected>Choose TA</option>
+                  {{#each ta}}
+                  <option value={{id}}>{{firstname}} {{lastname}}</option>
+                  {{/each}}
+                </select>
+              </div>
+            </div>
+            <button type="submit" class="waves-effect waves-light btn">Register</button>
+            <div class="not-lr right">Already Registered? Click <a href="/login">here</a> to login!</div>
+
+          </form>
         </div>
+      </div>
 
+
+
+      <div id="instructor" class="col s6 offset-s3">
         <div class="row">
-          <div class="input-field col s12">
-            <input id="username" type="text" name="username" class="validate">
-            <label for="username">Username</label>
-          </div>
-        </div>
+          <form  method="POST" action="/instructor_registration">
+            <div class="row">
+              <div class="input-field col s10 offset-s1">
+                <input id="first_name" type="text" name="firstname" class="validate" >
+                <label for="first_name">First Name</label>
+              </div>
+            </div>
+             <div class="row">
+              <div class="input-field col s10 offset-s1">
+                <input id="last_name" type="text" name="lastname" class="validate">
+                <label for="last_name">Last Name</label>
+              </div>
+            </div>
 
-        <div class="row">
-          <div class="input-field col s12">
-            <input id="password" type="password" name ="password" class="validate">
-            <label for="password">Password</label>
-          </div>
-        </div>
+            <div class="row">
+              <div class="input-field col s10 offset-s1">
+                <input id="username" type="text" name="username" class="validate">
+                <label for="username">Username</label>
+              </div>
+            </div>
 
-        <div>
-          <input name="teachOrTA" type="radio" id="test1" value="teacher"/>
-          <label for="test1">Teacher</label>
+            <div class="row">
+              <div class="input-field col s10 offset-s1">
+                <input id="password" type="password" name ="password" class="validate">
+                <label for="password">Password</label>
+              </div>
+            </div>
+
+            <div class="row radio">
+              <div class="input-field col s5 offset-s1">
+                <div>
+                  <input name="teachOrTA" type="radio" id="test1" value="teacher"/>
+                  <label for="test1">Teacher</label>
+                </div>
+              </div>
+               <div class="input-field col s5 offset-s1">
+                <div>
+                  <input name="teachOrTA" type="radio" id="test2" value="ta" />
+                  <label for="test2">TA</label>
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="waves-effect waves-light btn">Register</button>
+            <div class="not-lr right">Already Registered? Click <a href="/login">here</a> to login!</div>
+
+           </form>
         </div>
-        <div>
-          <input name="teachOrTA" type="radio" id="test2" value="ta" />
-          <label for="test2">TA</label>
-        </div>
-        <button type="submit" class="waves-effect waves-light btnt">Register</button>
-       </form>
+      </div>
     </div>
   </div>
 </div>
