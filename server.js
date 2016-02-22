@@ -1,39 +1,29 @@
-Skip to content
-This repository
-Search
-Pull requests
-Issues
-Gist
- @jdmiragliotta
- Unwatch 1
-  Star 0
- Fork 1 jdmiragliotta/myclassapp
- Code  Issues 0  Pull requests 0  Wiki  Pulse  Graphs  Settings
-Branch: master Find file Copy pathmyclassapp/server.js
-fde8c04  4 minutes ago
-@jdmiragliotta jdmiragliotta Refactored code and finally working with passport
-1 contributor
-RawBlameHistory     278 lines (245 sloc)  7.15 KB
 
-// Inports all packages
 var express           = require('express');
 var expressHandlebars = require('express-handlebars');
 var session           = require('express-session');
 var Sequelize         = require('sequelize');
+var passport          = require('passport');
+var passportLocal     = require('passport-local');
+var bcrypt            = require('bcryptjs');
+var bodyParser        = require('body-parser');
 var app               = express();
 var PORT = process.env.PORT || 8070;
 
 // Connects to database
 var sequelize = new Sequelize('class_db', 'root');
 
+// Access Public Folder
+app.use(express.static(__dirname + '/public'));
 
-/*-------------------------------------------------
-  PASSPORT
-  -------------------------------------------------*/
+// setting default layout to main.handlebars
+app.engine('handlebars', expressHandlebars({defaultLayout: 'main'}));
+app.set('view engine','handlebars');
+
+// bodyParser to read info from HTML
+app.use(bodyParser.urlencoded({extended: false}));
 
 // Creates a Secret for user login
-var passport          = require('passport');
-var passportLocal     = require('passport-local');
 app.use(session({
   secret: 'shh if I tell you its not a secret',
   cookie:{
@@ -43,10 +33,21 @@ app.use(session({
   saveUninitialized: true,
   resave: true
 }));
-  app.use(passport.initialize());
-  app.use(passport.session());
 
-//passport use methed as callback when being authenticated
+/*-------------------------------------------------
+PASSPORT
+-------------------------------------------------*/
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
+passport.deserializeUser(function(id, done) {
+  done(null, { id: id, username: id })
+});
 
 //STUDENT PASSPORT
 passport.use("student", new passportLocal.Strategy(
@@ -73,14 +74,7 @@ passport.use("student", new passportLocal.Strategy(
       });
     }));
 
-  passport.serializeUser(function(user, done) {
-    done(null, user.id);
-  });
-  passport.deserializeUser(function(id, done) {
-    done(null, { id: id, username: id })
-  });
-
-// //INSTRUCTOR PASSPORT
+// INSTRUCTOR PASSPORT
 passport.use("instructor", new passportLocal.Strategy(
   function(username, password, done) {
       //Check passwood in DB
@@ -104,11 +98,6 @@ passport.use("instructor", new passportLocal.Strategy(
         }
       });
     }));
-
-// bodyParser to read info from HTML
-var bcrypt            = require('bcryptjs');
-var bodyParser        = require('body-parser');
-app.use(bodyParser.urlencoded({extended: false}));
 
 /*-------------------------------------------------
   MODELS
@@ -150,9 +139,9 @@ app.use(bodyParser.urlencoded({extended: false}));
       hooks: {
         beforeCreate: function(input){
           input.password = bcrypt.hashSync(input.password, 10);
-         }
+        }
       }
-    });
+  });
 
   var Instructor = sequelize.define('Instructor',{
     username: {
@@ -189,16 +178,9 @@ app.use(bodyParser.urlencoded({extended: false}));
   // Creates a join for Instructors to student and TA to student
   Instructor.hasMany(Student);
 
-  app.use(express.static(__dirname + '/public'));
-// setting default layout to main.handlebars
-  app.engine('handlebars', expressHandlebars({defaultLayout: 'main'}));
-  app.set('view engine','handlebars');
-
-
-
 /*-------------------------------------------------
-  ROUTES
-  -------------------------------------------------*/
+ROUTES
+-------------------------------------------------*/
 
 //takes user to homepage  on page load
 app.get('/', function(req, res){
@@ -232,6 +214,7 @@ app.get('/register', function(req, res) {
     });
   });
 });
+
 
 //STUDENT REGISTRATION - FOR PASSPORT
 // Post information from form to register the student and enter into the database - this must match method=POST and action=/register in form
@@ -274,12 +257,31 @@ app.post('/instructor_login',
 
 
 app.get('/instructor', function(req,res){
+   var data;
+  Instructor.findAll({
+    where: {
+      teachOrTA:'teacher'
+    }
+  }).then(function(teacher) {
+    data = {
+      teacher: teacher
+    }
+    Instructor.findAll({
+      where: {
+        teachOrTA: 'ta'
+      }
+    }).then(function(ta) {
+      data.ta = ta;
   res.render('instructor',{
-    username: req.username,
-    isAuthenticated: req.isAuthenticated()
+    user: req.username,
+    isAuthenticated: req.isAuthenticated(),
+    data: data
+
+  });
+   console.log("ggggg"+data);
+  });
   });
 });
-
 app.get('/logout', function(req,res){
   req.session.authenticated = false;
   res.redirect('/');
@@ -290,6 +292,3 @@ sequelize.sync().then(function(){
     console.log("Boom");
   });
 });
-
-Status API Training Shop Blog About Pricing
-© 2016 GitHub, Inc. Terms Privacy Security Contact Help
