@@ -260,9 +260,10 @@ app.post('/instructor_login',
 app.get('/instructor', function(req,res){
   res.render('instructor',{
     user: req.username,
-    isAuthenticated: req.isAuthenticated()
+    isAuthenticated: req.isAuthenticated(),
    });
 });
+
 
 app.get('/logout', function(req,res){
   req.session.authenticated = false;
