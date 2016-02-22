@@ -1,10 +1,11 @@
+
 // Inports all packages
 var express           = require('express');
 var expressHandlebars = require('express-handlebars');
 var session           = require('express-session');
 var Sequelize         = require('sequelize');
 var app               = express();
-var PORT = process.env.PORT || 8080;
+var PORT = process.env.PORT || 8070;
 
 // Connects to database
 var sequelize = new Sequelize('class_db', 'root');
@@ -32,7 +33,7 @@ app.use(session({
 //passport use methed as callback when being authenticated
 
 //STUDENT PASSPORT
-passport.use(new passportLocal.Strategy(
+passport.use("student", new passportLocal.Strategy(
   function(username, password, done) {
       //Check passwood in DB
       Student.findOne({
@@ -64,7 +65,7 @@ passport.use(new passportLocal.Strategy(
   });
 
 // //INSTRUCTOR PASSPORT
-passport.use(new passportLocal.Strategy(
+passport.use("instructor", new passportLocal.Strategy(
   function(username, password, done) {
       //Check passwood in DB
       Instructor.findOne({
@@ -137,7 +138,6 @@ app.use(bodyParser.urlencoded({extended: false}));
       }
     });
 
-
   var Instructor = sequelize.define('Instructor',{
     username: {
       type: Sequelize.STRING,
@@ -148,6 +148,7 @@ app.use(bodyParser.urlencoded({extended: false}));
     },
     password:{
       type: Sequelize.STRING,
+      allowNull: false
     },
     firstname: {
       type: Sequelize.STRING,
@@ -223,22 +224,22 @@ app.post('/student_registration', function(req, res){
     res.redirect('/student'); // sends student to student page after successfully logged in after registering
  }).catch(function(err){ // throws error message if student made an error
     console.log(err);
-    res.redirect('/fail');
+    res.redirect('/register?msg="We\'re Sorry Something Went Wrong Please Try Again"');
   });
 });
 
 app.post('/instructor_registration', function(req, res){
   Instructor.create(req.body).then(function(instructor){ //creates new student and password in DB according to user input
-    res.redirect('/instructor', {instructor});
+    res.redirect('/instructor');
    // sends student to student page after successfully logged in after registering
  }).catch(function(err){ // throws error message if student made an error
     console.log(err);
-    res.redirect('/fail');
+    res.redirect('/register?msg="We\'re Sorry Something Went Wrong Please Try Again"');
   });
 });
 
 app.post('/student_login',
-  passport.authenticate('local', {
+  passport.authenticate('student', {
     successRedirect: '/student',
     failureRedirect: '/login'}));
 
@@ -251,7 +252,7 @@ app.get('/student', function(req,res){
 
 
 app.post('/instructor_login',
-  passport.authenticate('local', {
+  passport.authenticate('instructor', {
     successRedirect: '/instructor',
     failureRedirect: '/login'}));
 
@@ -273,5 +274,4 @@ sequelize.sync().then(function(){
     console.log("Boom");
   });
 });
-
 
