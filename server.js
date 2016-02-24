@@ -258,11 +258,31 @@ app.post('/instructor_login',
 
 
 app.get('/instructor', function(req,res){
+ var data;
+  Instructor.findAll({
+    where: {
+      teachOrTA:'teacher'
+    }
+  }).then(function(teacher) {
+    data = {
+      teacher: teacher
+    }
+    Instructor.findAll({
+      where: {
+        teachOrTA: 'ta'
+      }
+    }).then(function(ta) {
+      data.ta = ta;
+
   res.render('instructor',{
     user: req.username,
     isAuthenticated: req.isAuthenticated(),
+    data
    });
+  console.log("gggggg"+data);
 });
+    });
+  });
 
 
 app.get('/logout', function(req,res){
