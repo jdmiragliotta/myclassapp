@@ -13,7 +13,7 @@ var dotenv            = require('dotenv').config();
 var PORT = process.env.PORT || 8070;
 
 // Connects to database
-var sequelize = new Sequelize('class_db', 'root');
+var sequelize = new Sequelize(process.env.JAWDB_URL);
 
 // Access Public Folder
 app.use(express.static(__dirname + '/public'));
