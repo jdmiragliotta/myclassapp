@@ -8,12 +8,14 @@ var passportLocal     = require('passport-local');
 var bcrypt            = require('bcryptjs');
 var bodyParser        = require('body-parser');
 var app               = express();
-var dotenv            = require('dotenv').config();
+
 
 var PORT = process.env.PORT || 8070;
 
 // Connects to database
-var sequelize = new Sequelize(process.env.JAWDB_URL);
+var mysql = require('mysql');
+require('dotenv').config();
+var sequelize = new Sequelize(process.env.JAWSDB_URL);
 
 // Access Public Folder
 app.use(express.static(__dirname + '/public'));
