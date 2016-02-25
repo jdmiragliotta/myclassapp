@@ -8,6 +8,8 @@ var passportLocal     = require('passport-local');
 var bcrypt            = require('bcryptjs');
 var bodyParser        = require('body-parser');
 var app               = express();
+var dotenv            = require('dotenv').config();
+
 var PORT = process.env.PORT || 8070;
 
 // Connects to database
@@ -263,22 +265,23 @@ app.get('/instructor', function(req,res){
     where: {
       teachOrTA:'teacher'
     }
-  }).then(function(teacher) {
+  }).then(function(teachers) {
     data = {
-      teacher: teacher
+      teachers: teachers
     }
     Instructor.findAll({
       where: {
         teachOrTA: 'ta'
       }
-    }).then(function(ta) {
-      data.ta = ta;
+    }).then(function(tas) {
+      data.tas = tas;
 
   res.render('instructor',
   {
       user: req.username,
       isAuthenticated: req.isAuthenticated(),
-      data: data
+      teachers: data.teachers,
+      tas: data.tas,
   });
 });
 });

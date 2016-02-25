@@ -73,7 +73,7 @@
               <div class="input-field col s10 offset-s1">
                 <select class="form-control" name="teacherID">
                    <option value="" disabled selected>Choose  Teacher</option>
-                  {{#each data.teacher}}
+                  {{#each teachers}}
                   <option  value={{id}}>{{firstname}} {{lastname}}</option>
                   {{/each}}
                 </select>
@@ -81,7 +81,7 @@
               <div class="input-field col s5 offset-s1">
                 <select class="form-control" name="taID">
                   <option value="" disabled selected>Choose TA</option>
-                  {{#each data.ta}}
+                  {{#each tas}}
                   <option value={{id}}>{{firstname}} {{lastname}}</option>
                   {{/each}}
                 </select>
@@ -89,7 +89,7 @@
               <div class="input-field col s5">
                 <select class="form-control" name="taID2">
                   <option value="" disabled selected>Choose TA</option>
-                  {{#each ta}}
+                  {{#each tas}}
                   <option value={{id}}>{{firstname}} {{lastname}}</option>
                   {{/each}}
                 </select>
