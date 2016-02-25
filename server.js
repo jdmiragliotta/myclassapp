@@ -65,7 +65,7 @@ passport.use("student", new passportLocal.Strategy(
               //if password is correcnt authenticate the user with cookie
               done(null, {id: username, username:username});
             }else{
-              done(null,null);
+              done(null,false);
             }
           });
         }else {
@@ -90,7 +90,7 @@ passport.use("instructor", new passportLocal.Strategy(
               //if password is correcnt authenticat the user with cookie
               done(null, {id: username, username:username});
             }else{
-              done(null,null);
+              done(null,false);
             }
           });
         }else {
@@ -274,15 +274,15 @@ app.get('/instructor', function(req,res){
     }).then(function(ta) {
       data.ta = ta;
 
-  res.render('instructor',{
-    user: req.username,
-    isAuthenticated: req.isAuthenticated(),
-    data
-   });
-  console.log("gggggg"+data);
-});
-    });
+  res.render('instructor',
+  {
+      user: req.username,
+      isAuthenticated: req.isAuthenticated(),
+      data: data
   });
+});
+});
+});
 
 
 app.get('/logout', function(req,res){
