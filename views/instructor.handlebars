@@ -100,8 +100,11 @@
 
           </form>
   </div>
-{{#each data}}
-{{ta.firstname}}
- {{/each}}
+<p>Welcome!</p>
+{{#if isAuthenticated}}
+{{user.username}}
+
+
+{{/if}}
 
 </main>

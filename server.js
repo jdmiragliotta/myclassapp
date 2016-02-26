@@ -13,9 +13,10 @@ var app               = express();
 var PORT = process.env.PORT || 8070;
 
 // Connects to database
-var mysql = require('mysql');
-require('dotenv').config();
-var sequelize = new Sequelize(process.env.JAWSDB_URL);
+// var mysql = require('mysql');
+// require('dotenv').config();
+// var sequelize = new Sequelize(process.env.JAWSDB_URL);
+var sequelize = new Sequelize('class_db', 'root');
 
 // Access Public Folder
 app.use(express.static(__dirname + '/public'));
@@ -84,14 +85,14 @@ passport.use("instructor", new passportLocal.Strategy(
       //Check passwood in DB
       Instructor.findOne({
         where:{
-          username: username
+          username: username,
         }
       }).then(function(user){
         //check password against hash
         if(user){
           bcrypt.compare(password, user.dataValues.password, function(err,user){
             if(user){
-              //if password is correcnt authenticat the user with cookie
+              //if password is correct authenticate the user with cookie
               done(null, {id: username, username:username});
             }else{
               done(null,false);
@@ -106,7 +107,7 @@ passport.use("instructor", new passportLocal.Strategy(
 /*-------------------------------------------------
   MODELS
   -------------------------------------------------*/
-  var Student = sequelize.define('Student',{
+  var Student = sequelize.define('student',{
     username: {
       type: Sequelize.STRING,
       allowNull: false,
@@ -147,7 +148,7 @@ passport.use("instructor", new passportLocal.Strategy(
       }
   });
 
-  var Instructor = sequelize.define('Instructor',{
+  var Instructor = sequelize.define('instructor',{
     username: {
       type: Sequelize.STRING,
       unique: true,
@@ -260,9 +261,8 @@ app.post('/instructor_login',
     successRedirect: '/instructor',
     failureRedirect: '/login'}));
 
-
 app.get('/instructor', function(req,res){
- var data;
+ var data; /
   Instructor.findAll({
     where: {
       teachOrTA:'teacher'
@@ -280,11 +280,13 @@ app.get('/instructor', function(req,res){
 
   res.render('instructor',
   {
-      user: req.username,
+
+      user: req.user,
       isAuthenticated: req.isAuthenticated(),
       teachers: data.teachers,
       tas: data.tas,
   });
+   console.log(user)
 });
 });
 });
