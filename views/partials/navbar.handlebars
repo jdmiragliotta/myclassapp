@@ -1,4 +1,4 @@
-{{!-- <header>
+<header>
   <div class="sliver">
     <ul>
       <li><a href="#" class="link">Universitywide</a></li>
@@ -8,7 +8,6 @@
       <li><a href="#" class="link">Camden</a></li>
       <li><a href="#">Online</a></li>
     </ul>
-    <p class="logout-message right">{{msg}}</p>
   </div>
   <div class="nav-callout">
     <div id="pentagon">
@@ -16,8 +15,12 @@
     </div>
  <h4 class="rutgers250">The State Univeristy of New Jersey</h4>
     <div class="buttons right">
-      <a href="/login" class="waves-effect waves-light index-btn login btn"><i class="material-icons index-icon">account_circle</i>Log In</a>
-      <a href="/register" class="waves-effect waves-light index-btn register btn"><i class="material-icons index-icon">add_circle</i>Register</a>
+       {{#if isAuthenticated}}
+       <a href="/" class="waves-effect waves-light index-btn login btn"><i class="material-icons index-icon">home</i>Home</a>
+       {{else}}
+       <a href="/login" class="waves-effect waves-light index-btn login btn"><i class="material-icons index-icon">circle_account</i>Login</a>
+      {{/if}}
+       <a href="/logout" class="waves-effect waves-light index-btn register btn"><i class="material-icons index-icon">exit_to_app</i>Logout</a>
     </div>
     <div class="btm_sliver">
       <ul>
@@ -33,10 +36,4 @@
     </div>
 
   </div>
-</header> --}}
-{{> navbar}}
-
-<div class="callout">
-
- </div>
-
+</header>

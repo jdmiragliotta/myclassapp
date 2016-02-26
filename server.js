@@ -262,7 +262,7 @@ app.post('/instructor_login',
     failureRedirect: '/login'}));
 
 app.get('/instructor', function(req,res){
- var data; /
+ var data;
   Instructor.findAll({
     where: {
       teachOrTA:'teacher'
@@ -280,13 +280,11 @@ app.get('/instructor', function(req,res){
 
   res.render('instructor',
   {
-
       user: req.user,
       isAuthenticated: req.isAuthenticated(),
       teachers: data.teachers,
       tas: data.tas,
   });
-   console.log(user)
 });
 });
 });
