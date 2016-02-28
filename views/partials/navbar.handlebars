@@ -15,12 +15,16 @@
     </div>
  <h4 class="rutgers250">The State Univeristy of New Jersey</h4>
     <div class="buttons right">
-       {{#if isAuthenticated}}
+      {{#if isAuthenticated}}
        <a href="/" class="waves-effect waves-light index-btn login btn"><i class="material-icons index-icon">home</i>Home</a>
-       {{else}}
-       <a href="/login" class="waves-effect waves-light index-btn login btn"><i class="material-icons index-icon">circle_account</i>Login</a>
+      {{else}}
+       <a href="/login" class="waves-effect waves-light index-btn login btn"><i class="material-icons index-icon">account_circle</i>Login</a>
       {{/if}}
+      {{#if isAuthenticated}}
        <a href="/logout" class="waves-effect waves-light index-btn register btn"><i class="material-icons index-icon">exit_to_app</i>Logout</a>
+      {{else}}
+       <a href="/logout" class="waves-effect waves-light index-btn register btn"><i class="material-icons index-icon">account_circle</i>Register</a>
+      {{/if}}
     </div>
     <div class="btm_sliver">
       <ul>

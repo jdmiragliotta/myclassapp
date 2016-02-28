@@ -3,37 +3,10 @@
   <div class="container">
     <div class="row">
       <div class="col l6 offset-l3">
-        <h5>Welcome To The Instructor Dashboard!</h5>
+        <h5 class="dashboard-heading">Welcome To The Dashboard, <span class="username">{{loggedInUser.firstname}}</span>!</h5>
       </div>
     </div>
      <form  method="POST" action="/student_registration">
-            <div class="row">
-              <div class="input-field col s10 offset-s1">
-                <input  id="first_name" type="text" name="firstname" class="validate" >
-                <label for="first_name">First Name</label>
-              </div>
-           </div>
-
-            <div class="row">
-              <div class="input-field col s10 offset-s1">
-                <input id="last_name" type="text" name="lastname" class="validate">
-                <label for="last_name">Last Name</label>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="input-field col s10 offset-s1">
-                <input id="username" type="text" name="username" class="validate">
-                <label for="username">Username</label>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="input-field col s10 offset-s1">
-                <input id="password" type="password" name="password" class="validate">
-                <label for="password">Password</label>
-              </div>
-            </div>
 
             <div class="row">
               <div class="input-field col s10 offset-s1">
@@ -66,11 +39,5 @@
 
           </form>
   </div>
-<p>Welcome!</p>
-{{#if isAuthenticated}}
-{{user.username}}
-
-
-{{/if}}
 
 </main>

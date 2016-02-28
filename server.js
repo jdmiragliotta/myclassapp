@@ -262,7 +262,7 @@ app.post('/instructor_login',
     failureRedirect: '/login'}));
 
 app.get('/instructor', function(req,res){
- var data;
+  var data;
   Instructor.findAll({
     where: {
       teachOrTA:'teacher'
@@ -271,6 +271,7 @@ app.get('/instructor', function(req,res){
     data = {
       teachers: teachers
     }
+
     Instructor.findAll({
       where: {
         teachOrTA: 'ta'
@@ -278,16 +279,26 @@ app.get('/instructor', function(req,res){
     }).then(function(tas) {
       data.tas = tas;
 
+    Instructor.findOne({
+      where:{
+        username:req.user
+      }
+    }).then(function(loggedInUser) {
+          data.loggedInUser;
+        });
   res.render('instructor',
   {
       user: req.user,
       isAuthenticated: req.isAuthenticated(),
       teachers: data.teachers,
       tas: data.tas,
+      loggedInUser: data.loggedInUser,
   });
+  console.log(loggedInUser)
 });
 });
 });
+
 
 
 app.get('/logout', function(req,res){
