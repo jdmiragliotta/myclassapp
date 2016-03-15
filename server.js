@@ -302,8 +302,9 @@ app.get('/instructor', function(req,res){
 
 
 app.get('/logout', function(req,res){
-  req.session.authenticated = false;
-  res.redirect('/?msg=You have logged out');
+  req.logout();
+  res.redirect('/');
+
 });
 
 sequelize.sync().then(function(){
